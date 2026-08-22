@@ -1,22 +1,20 @@
-# Day 2 - 30 Days of Three.js
+# Day 3 - 30 Days of Three.js
 
 ## Overview
-Day 2 focuses on learning cameras, controls, and animations in Three.js.
+Day 3 focuses on fullscreen rendering, responsive resizing, pixel ratio, custom BufferGeometry, and debug UI.
 
 ## What I Learned
-- **Cameras** — `PerspectiveCamera` setup and positioning
-- **OrbitControls** — Interactive camera movement (rotate, zoom, pan)
-- **Cursor Tracking** — Mapping mouse position to normalized coordinates
-- **GSAP Animations** — Animating position, rotation, and scale with `gsap.to()`
-- **Window Resize Handling** — Making the canvas responsive
-
-## Bonus Project
-Built a **3D Table Tennis Game** inside the `TableTennis/` folder using only what I learned in Day 1 and Day 2!
+- **Fullscreen Rendering** — Using `window.innerWidth / innerHeight` instead of hardcoded sizes
+- **Responsive Resizing** — Listening for `resize` events to update camera aspect ratio, projection matrix, and renderer
+- **Pixel Ratio** — `renderer.setPixelRatio()` for sharp rendering on Retina/high-DPI screens, capped at 2 for performance
+- **Custom BufferGeometry** — Building geometry from raw `Float32Array` data (`count * 3 * 3` triangle math)
+- **Debug UI (lil-gui)** — Adding a real-time control panel with sliders, color pickers, checkboxes, buttons, and organized folders
 
 ## Tech Stack
 - HTML / CSS / JavaScript
 - [Three.js](https://threejs.org/)
 - [GSAP](https://greensock.com/gsap/)
+- [lil-gui](https://lil-gui.georgealways.com/)
 - Vite (Development Server)
 
 ## How to Run
