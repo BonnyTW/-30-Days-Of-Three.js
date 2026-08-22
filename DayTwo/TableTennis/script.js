@@ -148,11 +148,11 @@ window.addEventListener('mousemove', (event) => {
 // Game Variables
 let ballSpeedX = 0.04
 let ballSpeedZ = 0.06
-let ballSpeedY = 0.08  // upward velocity for the arc
-const gravity = -0.003  // pulls the ball down each frame
-let lastHitBy = 'none'  // tracks who hit the ball last: 'player' or 'ai'
-let isWaiting = false    // true during the 2-second delay after a score
-let gameStarted = false  // game hasn't started yet — orbit freely!
+let ballSpeedY = 0.08
+const gravity = -0.003
+let lastHitBy = 'none'
+let isWaiting = false
+let gameStarted = false
 
 // Start Button
 const startBtn = document.getElementById('startBtn')
@@ -176,80 +176,80 @@ function resetBall() {
 const tick = () => {
     orbitControls.update()
 
-    // Only move paddles and ball after game starts
+
     if (gameStarted) {
-        // Player Racket follows mouse
+
         racket1.position.x = cursor.x * 5
         Stick1.position.x = cursor.x * 5
 
-        // AI Racket follows the ball (slightly slower so it's beatable)
+
+
+
         let aiTarget = ball.position.x * 0.85
         racket2.position.x += (aiTarget - racket2.position.x) * 0.08
         Stick2.position.x = racket2.position.x
 
-        // Only move ball if not waiting
+
         if (!isWaiting) {
-            // Move the ball
+
             ball.position.x += ballSpeedX
             ball.position.z += ballSpeedZ
             ball.position.y += ballSpeedY
-            ballSpeedY += gravity  // gravity pulls it down
+            ballSpeedY += gravity
 
-            // Ball bounces off the table surface — ONLY on opponent's half
+
             if (ball.position.y <= 0.25) {
-                // Player hit it → bounce only on AI's half (z < 0)
-                // AI hit it → bounce only on player's half (z > 0)
+
                 if ((lastHitBy === 'player' && ball.position.z < 0) ||
                     (lastHitBy === 'ai' && ball.position.z > 0) ||
                     lastHitBy === 'none') {
                     ball.position.y = 0.25
-                    ballSpeedY = Math.abs(ballSpeedY) * 0.8  // small bounce off table
+                    ballSpeedY = Math.abs(ballSpeedY) * 0.8
                 }
             }
 
-            // Ball fell below the table (missed the correct half) → score!
+
             if (ball.position.y < -1) {
                 ball.visible = false
                 isWaiting = true
                 setTimeout(resetBall, 2000)
             }
 
-            // Bounce off side walls (left/right edges of the table)
             if (ball.position.x > 2.3 || ball.position.x < -2.3) {
                 ballSpeedX *= -1
             }
 
-            // Player Racket hit (your side, z ~ 3.8)
             if (ball.position.z > 3.5 && ball.position.z < 4.1) {
                 if (Math.abs(ball.position.x - racket1.position.x) < 0.5) {
-                    ballSpeedZ = -Math.abs(ballSpeedZ)  // send it towards AI
-                    ballSpeedY = 0.08  // arc it up and over the net
+                    ballSpeedZ = -Math.abs(ballSpeedZ)
+                    ballSpeedY = 0.08
                     ballSpeedX = (ball.position.x - racket1.position.x) * 0.15
                     lastHitBy = 'player'
                 }
             }
 
-            // AI Racket hit (far side, z ~ -3.8)
             if (ball.position.z < -3.5 && ball.position.z > -4.1) {
                 if (Math.abs(ball.position.x - racket2.position.x) < 0.5) {
-                    ballSpeedZ = Math.abs(ballSpeedZ)  // send it towards player
-                    ballSpeedY = 0.08  // arc it up
+                    ballSpeedZ = Math.abs(ballSpeedZ)
+                    ballSpeedY = 0.08
                     ballSpeedX = (ball.position.x - racket2.position.x) * 0.15
                     lastHitBy = 'ai'
                 }
             }
 
-            // Ball went past the table → score!
+
             if (ball.position.z > 5 || ball.position.z < -5) {
                 ball.visible = false
                 isWaiting = true
                 setTimeout(resetBall, 2000)
             }
         }
-    } // end gameStarted
+    }
+
 
     renderer.render(scene, camera)
     window.requestAnimationFrame(tick)
 }
+
 
 tick()
