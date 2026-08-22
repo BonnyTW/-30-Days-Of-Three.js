@@ -1,0 +1,36 @@
+body {
+    margin: 0;
+    overflow: hidden; /* Hides the scrollbars */
+    background-color: #1a1a2e; /* Darker background */
+}
+
+canvas {
+    display: block;
+}
+
+#startBtn {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 18px 50px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 6px 25px rgba(231, 76, 60, 0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#startBtn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 8px 35px rgba(231, 76, 60, 0.7);
+}
+
+#startBtn.hidden {
+    display: none;
+}
