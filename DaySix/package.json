@@ -1,0 +1,16 @@
+{
+  "name": "daysix",
+  "version": "1.0.0",
+  "description": "Three.js 3D Text and Donut Scene",
+  "main": "script.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
