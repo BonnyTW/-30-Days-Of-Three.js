@@ -1,0 +1,16 @@
+{
+  "name": "dayseven",
+  "version": "1.0.0",
+  "description": "Three.js Practice Project",
+  "main": "script.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

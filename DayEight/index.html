@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day Eight - Target Shooting Range</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+    
+    <!-- UI Overlay -->
+    <div id="ui-container">
+        <div id="score-board">Score: <span id="score-value">0</span></div>
+        <button id="reset-button">Restart (R)</button>
+        <div id="instructions">Press <strong>ESC</strong> to unlock cursor and exit</div>
+    </div>
+    
+    <!-- Crosshair -->
+    <div id="crosshair">
+        <div class="crosshair-line horizontal"></div>
+        <div class="crosshair-line vertical"></div>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+</body>
+</html>
