@@ -107,6 +107,7 @@ for (let i = 0; i < 100; i++) {
     mesh.userData = {
         isInteractable: true,
         isDestroyed: false,
+        baseScale: scale,
         speedX: (Math.random() - 0.5) * 0.02,
         speedY: (Math.random() - 0.5) * 0.02,
         floatSpeed: Math.random() * 0.02,
@@ -138,6 +139,49 @@ scene.add(whiteLight);
 // Raycaster (Day 8)
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+let hoveredObject = null;
+
+// Explosion Effect Generator
+const createExplosion = (position, color) => {
+    const particleCount = 20;
+    const particleGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+    const particleMaterial = new THREE.MeshBasicMaterial({ color: color });
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+        particle.position.copy(position);
+        scene.add(particle);
+
+        const angle = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+        const speed = Math.random() * 4 + 2;
+        
+        const targetX = position.x + speed * Math.sin(phi) * Math.cos(angle);
+        const targetY = position.y + speed * Math.sin(phi) * Math.sin(angle);
+        const targetZ = position.z + speed * Math.cos(phi);
+
+        gsap.to(particle.position, {
+            x: targetX,
+            y: targetY,
+            z: targetZ,
+            duration: 0.5 + Math.random() * 0.5,
+            ease: "power2.out"
+        });
+
+        gsap.to(particle.scale, {
+            x: 0,
+            y: 0,
+            z: 0,
+            duration: 0.5 + Math.random() * 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+                scene.remove(particle);
+                particle.geometry.dispose();
+                particle.material.dispose();
+            }
+        });
+    }
+};
 
 // Interaction Logic: Click to destroy
 window.addEventListener('mousedown', (event) => {
@@ -154,12 +198,41 @@ window.addEventListener('mousedown', (event) => {
     if (intersects.length > 0) {
         const hitObject = intersects[0].object;
 
+        // Draw Laser Beam!
+        const material = new THREE.LineBasicMaterial({ color: '#33ccff', linewidth: 3 });
+        const points = [];
+        
+        // Offset the start point so it looks like it comes from slightly below the camera
+        const startPoint = new THREE.Vector3(0, -1, -2);
+        startPoint.applyMatrix4(camera.matrixWorld);
+        
+        points.push(startPoint);
+        points.push(intersects[0].point);
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(geometry, material);
+        scene.add(line);
+
+        gsap.to(material, {
+            opacity: 0,
+            transparent: true,
+            duration: 0.2,
+            onComplete: () => {
+                scene.remove(line);
+                geometry.dispose();
+                material.dispose();
+            }
+        });
+
         if (hitObject.userData.isInteractable && !hitObject.userData.isDestroyed) {
             hitObject.userData.isDestroyed = true; // Mark as dead
             
             // Score update
             score++;
             scoreElement.innerText = score;
+
+            // Trigger Particle Explosion
+            createExplosion(hitObject.position, '#ff3366');
 
             // Visual feedback: instantly turn neon pink
             hitObject.material.color.set('#ff3366');
@@ -168,9 +241,9 @@ window.addEventListener('mousedown', (event) => {
 
             // GSAP Animation: Explode and disappear
             gsap.to(hitObject.scale, {
-                x: hitObject.scale.x * 2.5,
-                y: hitObject.scale.y * 2.5,
-                z: hitObject.scale.z * 2.5,
+                x: hitObject.userData.baseScale * 2.5,
+                y: hitObject.userData.baseScale * 2.5,
+                z: hitObject.userData.baseScale * 2.5,
                 duration: 0.15,
                 ease: "power2.out"
             });
@@ -202,8 +275,45 @@ window.addEventListener('mousemove', (event) => {
 
     if (intersects.length > 0 && !intersects[0].object.userData.isDestroyed) {
         document.body.style.cursor = 'crosshair';
+        const object = intersects[0].object;
+        
+        if (hoveredObject !== object) {
+            // Restore previous object if it wasn't destroyed
+            if (hoveredObject && !hoveredObject.userData.isDestroyed) {
+                gsap.to(hoveredObject.scale, {
+                    x: hoveredObject.userData.baseScale,
+                    y: hoveredObject.userData.baseScale,
+                    z: hoveredObject.userData.baseScale,
+                    duration: 0.3
+                });
+                hoveredObject.material.emissiveIntensity = 0;
+            }
+            
+            hoveredObject = object;
+            
+            // Scale up newly hovered object
+            gsap.to(hoveredObject.scale, {
+                x: hoveredObject.userData.baseScale * 1.4,
+                y: hoveredObject.userData.baseScale * 1.4,
+                z: hoveredObject.userData.baseScale * 1.4,
+                duration: 0.3,
+                ease: "back.out(1.5)"
+            });
+            hoveredObject.material.emissive = new THREE.Color('#33ccff');
+            hoveredObject.material.emissiveIntensity = 0.5;
+        }
     } else {
         document.body.style.cursor = 'default';
+        if (hoveredObject && !hoveredObject.userData.isDestroyed) {
+            gsap.to(hoveredObject.scale, {
+                x: hoveredObject.userData.baseScale,
+                y: hoveredObject.userData.baseScale,
+                z: hoveredObject.userData.baseScale,
+                duration: 0.3
+            });
+            hoveredObject.material.emissiveIntensity = 0;
+            hoveredObject = null;
+        }
     }
 });
 
