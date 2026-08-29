@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    background-color: #050510;
+}
+
+.webgl {
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: none;
+    z-index: 1;
+}
+
+#ui-container {
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    z-index: 10;
+    color: white;
+    pointer-events: none;
+}
+
+h1 {
+    font-size: 54px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #ff3366, #33ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+}
+
+p {
+    font-size: 20px;
+    color: #8892b0;
+    margin-bottom: 30px;
+}
+
+#instructions {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 15px;
+    font-weight: 500;
+    color: #ccd6f6;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+#score-board {
+    font-size: 18px;
+    color: #a8b2d1;
+    font-weight: 600;
+}
+
+#score-value {
+    color: #ff3366;
+    font-size: 24px;
+}
