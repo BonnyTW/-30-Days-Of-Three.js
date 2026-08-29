@@ -1,22 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import gsap from 'gsap';
 
-// Canvas
 const canvas = document.querySelector('canvas.webgl');
 
-// Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#050510');
-scene.fog = new THREE.Fog('#050510', 15, 60);
+scene.background = new THREE.Color('#e2e8f0');
+scene.fog = new THREE.Fog('#e2e8f0', 15, 40);
 
-// UI Elements
-const scoreElement = document.getElementById('score-value');
-let score = 0;
-
-// Sizes
 const sizes = { width: window.innerWidth, height: window.innerHeight };
 
 window.addEventListener('resize', () => {
@@ -28,244 +19,199 @@ window.addEventListener('resize', () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-// Camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(0, 2, 35);
+camera.position.set(0, 5, 20);
 scene.add(camera);
 
-// Controls (Day 7)
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.maxDistance = 50;
-controls.minDistance = 10;
+controls.maxPolarAngle = Math.PI / 2 - 0.05;
 
-// Materials
-const textMaterial = new THREE.MeshStandardMaterial({
-    color: '#ffffff',
-    roughness: 0.1,
-    metalness: 0.8,
-});
-
-const shapeMaterial = new THREE.MeshStandardMaterial({
-    color: '#1a1f35',
-    roughness: 0.2,
-    metalness: 0.9,
-});
-
-// Fonts (Day 6)
-const fontLoader = new FontLoader();
-let textMesh;
-
-fontLoader.load(
-    'https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
-    (font) => {
-        const textGeometry = new TextGeometry('THREE.JS', {
-            font: font,
-            size: 3.5,
-            depth: 0.8,
-            curveSegments: 12,
-            bevelEnabled: true,
-            bevelThickness: 0.08,
-            bevelSize: 0.04,
-            bevelOffset: 0,
-            bevelSegments: 5
-        });
-        textGeometry.center();
-        textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.castShadow = true;
-        scene.add(textMesh);
-    }
-);
-
-// Floating Interactive Shapes (Day 8 combination)
-const shapes = [];
-const interactables = [];
-const geometry = new THREE.IcosahedronGeometry(0.8, 0);
-
-for (let i = 0; i < 100; i++) {
-    // .clone() so each shape can change color independently!
-    const mesh = new THREE.Mesh(geometry, shapeMaterial.clone());
-    
-    // Random position in a spherical area around the text
-    const radius = 8 + Math.random() * 15;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos((Math.random() * 2) - 1);
-    
-    mesh.position.x = radius * Math.sin(phi) * Math.cos(theta);
-    mesh.position.y = radius * Math.sin(phi) * Math.sin(theta);
-    mesh.position.z = radius * Math.cos(phi);
-    
-    mesh.rotation.x = Math.random() * Math.PI;
-    mesh.rotation.y = Math.random() * Math.PI;
-    
-    const scale = Math.random() * 1.2 + 0.3;
-    mesh.scale.set(scale, scale, scale);
-    mesh.castShadow = true;
-
-    // userData for game logic! (Day 8)
-    mesh.userData = {
-        isInteractable: true,
-        isDestroyed: false,
-        baseScale: scale,
-        speedX: (Math.random() - 0.5) * 0.02,
-        speedY: (Math.random() - 0.5) * 0.02,
-        floatSpeed: Math.random() * 0.02,
-        initialY: mesh.position.y
-    };
-
-    scene.add(mesh);
-    shapes.push(mesh);
-    interactables.push(mesh); // Add to the array the raycaster will check
-}
-
-// Lights (Day 7)
-const ambientLight = new THREE.AmbientLight('#ffffff', 0.1);
+const ambientLight = new THREE.AmbientLight('#ffffff', 0.7);
 scene.add(ambientLight);
 
-// Cinematic Point Lights for that neon glow
-const pinkLight = new THREE.PointLight('#ff3366', 8, 40);
-pinkLight.position.set(-8, 3, 5);
-scene.add(pinkLight);
+const directionalLight = new THREE.DirectionalLight('#ffffff', 1.5);
+directionalLight.position.set(5, 10, 5);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.camera.near = 0.1;
+directionalLight.shadow.camera.far = 40;
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.bottom = -10;
+scene.add(directionalLight);
 
-const blueLight = new THREE.PointLight('#33ccff', 8, 40);
-blueLight.position.set(8, -3, 5);
-scene.add(blueLight);
+const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(100, 100),
+    new THREE.MeshStandardMaterial({ color: '#cbd5e1', roughness: 0.5 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
 
-const whiteLight = new THREE.DirectionalLight('#ffffff', 1);
-whiteLight.position.set(0, 10, 10);
-scene.add(whiteLight);
+const redMaterial = new THREE.MeshStandardMaterial({ color: '#ef4444', roughness: 0.3, metalness: 0.1 });
+const whiteMaterial = new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.3, metalness: 0.1 });
+const standMaterial = new THREE.MeshStandardMaterial({ color: '#475569', roughness: 0.8 });
 
-// Raycaster (Day 8)
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-let hoveredObject = null;
+const targets = [];
+const interactables = [];
 
-// Explosion Effect Generator
-const createExplosion = (position, color) => {
-    const particleCount = 20;
-    const particleGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-    const particleMaterial = new THREE.MeshBasicMaterial({ color: color });
+const targetPattern = [
+    ['r','r','r','r','r'],
+    ['r','w','w','w','r'],
+    ['r','w','r','w','r'],
+    ['r','w','w','w','r'],
+    ['r','r','r','r','r']
+];
 
-    for (let i = 0; i < particleCount; i++) {
-        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-        particle.position.copy(position);
-        scene.add(particle);
+const createArcadeTarget = (x, z) => {
+    const targetGroup = new THREE.Group();
+    targetGroup.position.set(x, 0, z);
+    
+    const standHeight = 3;
+    const stand = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, standHeight, 0.5),
+        standMaterial
+    );
+    stand.position.y = standHeight / 2;
+    stand.castShadow = true;
+    stand.receiveShadow = true;
+    targetGroup.add(stand);
 
-        const angle = Math.random() * Math.PI * 2;
-        const phi = Math.acos((Math.random() * 2) - 1);
-        const speed = Math.random() * 4 + 2;
-        
-        const targetX = position.x + speed * Math.sin(phi) * Math.cos(angle);
-        const targetY = position.y + speed * Math.sin(phi) * Math.sin(angle);
-        const targetZ = position.z + speed * Math.cos(phi);
+    const boardGroup = new THREE.Group();
+    boardGroup.position.y = standHeight + 1;
+    targetGroup.add(boardGroup);
 
-        gsap.to(particle.position, {
-            x: targetX,
-            y: targetY,
-            z: targetZ,
-            duration: 0.5 + Math.random() * 0.5,
-            ease: "power2.out"
-        });
+    const size = 0.4;
+    const offset = (5 * size) / 2 - (size / 2);
 
-        gsap.to(particle.scale, {
-            x: 0,
-            y: 0,
-            z: 0,
-            duration: 0.5 + Math.random() * 0.5,
-            ease: "power2.out",
-            onComplete: () => {
-                scene.remove(particle);
-                particle.geometry.dispose();
-                particle.material.dispose();
-            }
-        });
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+            const type = targetPattern[row][col];
+            const mat = type === 'r' ? redMaterial.clone() : whiteMaterial.clone();
+            
+            const piece = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), mat);
+            
+            piece.position.set(
+                col * size - offset,
+                -(row * size - offset),
+                0
+            );
+            
+            piece.userData = {
+                offsetX: piece.position.x,
+                offsetY: piece.position.y,
+                offsetZ: piece.position.z,
+                isPiece: true
+            };
+            
+            piece.castShadow = true;
+            piece.receiveShadow = true;
+            boardGroup.add(piece);
+            interactables.push(piece);
+        }
     }
+    
+    boardGroup.userData = {
+        isTarget: true,
+        isDestroyed: false,
+        initialY: boardGroup.position.y
+    };
+    
+    scene.add(targetGroup);
+    targets.push(boardGroup);
 };
 
-// Interaction Logic: Click to destroy
+createArcadeTarget(-6, 0);
+createArcadeTarget(0, -3);
+createArcadeTarget(6, 0);
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 window.addEventListener('mousedown', (event) => {
-    // Convert mouse click position to Three.js coordinates (-1 to +1 range)
     mouse.x = (event.clientX / sizes.width) * 2 - 1;
     mouse.y = -(event.clientY / sizes.height) * 2 + 1;
 
-    // Aim the laser from the camera to the mouse position
     raycaster.setFromCamera(mouse, camera);
-
-    // Check what we hit!
     const intersects = raycaster.intersectObjects(interactables, false);
 
     if (intersects.length > 0) {
-        const hitObject = intersects[0].object;
+        const hitPiece = intersects[0].object;
 
-        // Draw Laser Beam!
-        const material = new THREE.LineBasicMaterial({ color: '#33ccff', linewidth: 3 });
-        const points = [];
-        
-        // Offset the start point so it looks like it comes from slightly below the camera
-        const startPoint = new THREE.Vector3(0, -1, -2);
-        startPoint.applyMatrix4(camera.matrixWorld);
-        
-        points.push(startPoint);
-        points.push(intersects[0].point);
+        if (hitPiece.userData.isPiece) {
+            const boardGroup = hitPiece.parent;
+            
+            if (!boardGroup.userData.isDestroyed) {
+                boardGroup.userData.isDestroyed = true;
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
+                const laserMat = new THREE.LineBasicMaterial({ color: '#ef4444', linewidth: 4 });
+                const points = [
+                    new THREE.Vector3(0, -1, 3).applyMatrix4(camera.matrixWorld),
+                    intersects[0].point
+                ];
+                
+                const laserGeo = new THREE.BufferGeometry().setFromPoints(points);
+                const laser = new THREE.Line(laserGeo, laserMat);
+                scene.add(laser);
 
-        gsap.to(material, {
-            opacity: 0,
-            transparent: true,
-            duration: 0.2,
-            onComplete: () => {
-                scene.remove(line);
-                geometry.dispose();
-                material.dispose();
+                gsap.to(laserMat, {
+                    opacity: 0,
+                    transparent: true,
+                    duration: 0.15,
+                    onComplete: () => {
+                        scene.remove(laser);
+                        laserGeo.dispose();
+                        laserMat.dispose();
+                    }
+                });
+
+                const pieces = [...boardGroup.children];
+                pieces.forEach(piece => {
+                    const blastStrength = 5 + Math.random() * 5;
+                    
+                    let dirX = piece.userData.offsetX * 2;
+                    let dirY = piece.userData.offsetY * 2;
+                    let dirZ = - (2 + Math.random() * 2); 
+
+                    scene.attach(piece); 
+
+                    gsap.to(piece.position, {
+                        x: piece.position.x + dirX * blastStrength,
+                        y: Math.max(piece.position.y + dirY * blastStrength, 0.2),
+                        z: piece.position.z + dirZ * blastStrength,
+                        duration: 1 + Math.random() * 0.5,
+                        ease: "power3.out"
+                    });
+
+                    gsap.to(piece.rotation, {
+                        x: Math.random() * Math.PI * 8,
+                        y: Math.random() * Math.PI * 8,
+                        z: Math.random() * Math.PI * 8,
+                        duration: 1 + Math.random() * 0.5,
+                        ease: "power3.out"
+                    });
+
+                    gsap.to(piece.scale, {
+                        x: 0, y: 0, z: 0,
+                        duration: 0.4,
+                        delay: 0.6 + Math.random() * 0.4,
+                        ease: "power2.in",
+                        onComplete: () => {
+                            scene.remove(piece);
+                            piece.geometry.dispose();
+                            piece.material.dispose();
+                        }
+                    });
+                });
             }
-        });
-
-        if (hitObject.userData.isInteractable && !hitObject.userData.isDestroyed) {
-            hitObject.userData.isDestroyed = true; // Mark as dead
-            
-            // Score update
-            score++;
-            scoreElement.innerText = score;
-
-            // Trigger Particle Explosion
-            createExplosion(hitObject.position, '#ff3366');
-
-            // Visual feedback: instantly turn neon pink
-            hitObject.material.color.set('#ff3366');
-            hitObject.material.emissive = new THREE.Color('#ff3366');
-            hitObject.material.emissiveIntensity = 2;
-
-            // GSAP Animation: Explode and disappear
-            gsap.to(hitObject.scale, {
-                x: hitObject.userData.baseScale * 2.5,
-                y: hitObject.userData.baseScale * 2.5,
-                z: hitObject.userData.baseScale * 2.5,
-                duration: 0.15,
-                ease: "power2.out"
-            });
-            
-            gsap.to(hitObject.scale, {
-                x: 0,
-                y: 0,
-                z: 0,
-                duration: 0.4,
-                delay: 0.15,
-                ease: "back.in(2)",
-                onComplete: () => {
-                    scene.remove(hitObject); // Clean up memory!
-                    hitObject.geometry.dispose();
-                    hitObject.material.dispose();
-                }
-            });
         }
     }
 });
 
-// Cursor Hover Effect (Change cursor to crosshair if hovering over a shape)
 window.addEventListener('mousemove', (event) => {
     mouse.x = (event.clientX / sizes.width) * 2 - 1;
     mouse.y = -(event.clientY / sizes.height) * 2 + 1;
@@ -273,73 +219,28 @@ window.addEventListener('mousemove', (event) => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(interactables, false);
 
-    if (intersects.length > 0 && !intersects[0].object.userData.isDestroyed) {
+    if (intersects.length > 0 && !intersects[0].object.parent.userData.isDestroyed) {
         document.body.style.cursor = 'crosshair';
-        const object = intersects[0].object;
-        
-        if (hoveredObject !== object) {
-            // Restore previous object if it wasn't destroyed
-            if (hoveredObject && !hoveredObject.userData.isDestroyed) {
-                gsap.to(hoveredObject.scale, {
-                    x: hoveredObject.userData.baseScale,
-                    y: hoveredObject.userData.baseScale,
-                    z: hoveredObject.userData.baseScale,
-                    duration: 0.3
-                });
-                hoveredObject.material.emissiveIntensity = 0;
-            }
-            
-            hoveredObject = object;
-            
-            // Scale up newly hovered object
-            gsap.to(hoveredObject.scale, {
-                x: hoveredObject.userData.baseScale * 1.4,
-                y: hoveredObject.userData.baseScale * 1.4,
-                z: hoveredObject.userData.baseScale * 1.4,
-                duration: 0.3,
-                ease: "back.out(1.5)"
-            });
-            hoveredObject.material.emissive = new THREE.Color('#33ccff');
-            hoveredObject.material.emissiveIntensity = 0.5;
-        }
     } else {
         document.body.style.cursor = 'default';
-        if (hoveredObject && !hoveredObject.userData.isDestroyed) {
-            gsap.to(hoveredObject.scale, {
-                x: hoveredObject.userData.baseScale,
-                y: hoveredObject.userData.baseScale,
-                z: hoveredObject.userData.baseScale,
-                duration: 0.3
-            });
-            hoveredObject.material.emissiveIntensity = 0;
-            hoveredObject = null;
-        }
     }
 });
 
-// Renderer
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-// Animation Loop
 const clock = new THREE.Clock();
 
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
-    // Rotate shapes and add floating effect
-    for (const mesh of shapes) {
-        if (!mesh.userData.isDestroyed) {
-            mesh.rotation.x += mesh.userData.speedX;
-            mesh.rotation.y += mesh.userData.speedY;
-            mesh.position.y = mesh.userData.initialY + Math.sin(elapsedTime * 2 + mesh.position.x) * mesh.userData.floatSpeed * 15;
+    for (const board of targets) {
+        if (!board.userData.isDestroyed) {
+            board.position.y = board.userData.initialY + Math.sin(elapsedTime * 2 + board.position.x) * 0.2;
         }
-    }
-
-    // Gentle float for the center text
-    if (textMesh) {
-        textMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.4;
     }
 
     controls.update();
