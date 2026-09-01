@@ -1,5 +1,5 @@
 # Day 4: Textures in Three.js
-
+ 
 Today, I learned how to apply and manipulate textures (images) on 3D objects in Three.js. Here is a breakdown of what I learned and what each concept is used for in simple terms:
 
 ## 1. Loading Textures
