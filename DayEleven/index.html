@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Virtual Car Showroom - Walk around and configure cars in 3D">
+    <title>Apex Motors | Virtual Showroom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <h1>DayEleven</h1>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <p class="loading-text">Preparing Showroom...</p>
+        </div>
+    </div>
+
+    <!-- Entry Overlay -->
+    <div id="entry-overlay" style="display:none;">
+        <div class="entry-content">
+            <h1>Virtual Showroom</h1>
+            <p>WASD to walk · Mouse to look · Click a car to inspect</p>
+            <button id="enter-btn">ENTER SHOWROOM</button>
+        </div>
+    </div>
+
+    <!-- Crosshair -->
+    <div id="crosshair" style="display:none;">
+        <div class="crosshair-dot"></div>
+    </div>
+
+    <!-- HUD Hint -->
+    <div id="hud" style="display:none;">
+        <div class="exhibit-hint" id="exhibit-hint"></div>
+    </div>
+
+    <!-- Configurator Panel -->
+    <div id="config-panel" style="display:none;">
+        <div class="config-content">
+            <h2 id="config-title">Model S</h2>
+            <p id="config-specs">850 HP | 0-60 in 2.4s</p>
+            
+            <div class="config-section">
+                <h3>Select Paint</h3>
+                <div class="color-picker" id="paint-colors">
+                    <div class="color-swatch active" style="background: #a30000;" data-color="#a30000"></div>
+                    <div class="color-swatch" style="background: #002244;" data-color="#002244"></div>
+                    <div class="color-swatch" style="background: #111111;" data-color="#111111"></div>
+                    <div class="color-swatch" style="background: #eeeeee;" data-color="#eeeeee"></div>
+                    <div class="color-swatch" style="background: #d4af37;" data-color="#d4af37"></div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>Finish</h3>
+                <div class="button-group" id="paint-finish">
+                    <button class="active" data-r="0.1" data-m="0.5" data-c="1.0">Glossy</button>
+                    <button data-r="0.6" data-m="0.2" data-c="0.0">Matte</button>
+                    <button data-r="0.2" data-m="1.0" data-c="0.5">Metallic</button>
+                </div>
+            </div>
+
+            <button id="cta-btn">Book a Test Drive</button>
+            <button id="exit-config-btn">Back to Showroom</button>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

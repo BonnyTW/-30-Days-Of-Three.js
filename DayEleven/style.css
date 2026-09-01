@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    background: #000;
+    color: #fff;
+    user-select: none;
+}
+
+canvas.webgl {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+}
+
+/* ── Loading & Entry ── */
+#loading-screen, #entry-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; transition: opacity 0.8s ease;
+}
+#loading-screen { background: #0a0a0a; }
+#entry-overlay { background: rgba(5,5,5,0.8); backdrop-filter: blur(10px); }
+.fade-out { opacity: 0; pointer-events: none; }
+
+.loader-content, .entry-content { text-align: center; }
+h1 { font-size: 3rem; font-weight: 800; letter-spacing: 5px; margin-bottom: 20px; }
+.progress-bar { width: 300px; height: 3px; background: #333; margin: 0 auto 15px; }
+.progress-fill { width: 0%; height: 100%; background: #fff; transition: width 0.3s; }
+.loading-text { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 2px; }
+
+.entry-content p { color: #aaa; margin-bottom: 30px; letter-spacing: 1px; }
+#enter-btn {
+    padding: 15px 40px; font-size: 1rem; font-family: 'Montserrat', sans-serif;
+    font-weight: 600; background: #fff; color: #000;
+    border: none; cursor: pointer; transition: transform 0.2s;
+}
+#enter-btn:hover { transform: scale(1.05); }
+
+/* ── HUD & Crosshair ── */
+#crosshair {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 30; pointer-events: none;
+}
+.crosshair-dot {
+    width: 6px; height: 6px; background: rgba(255,255,255,0.5);
+    border-radius: 50%; transition: transform 0.2s, background 0.2s;
+}
+.crosshair-dot.active { transform: scale(2); background: #fff; }
+
+#hud {
+    position: fixed; bottom: 40px; width: 100%;
+    display: flex; justify-content: center; pointer-events: none; z-index: 30;
+}
+.exhibit-hint {
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+    padding: 10px 25px; border: 1px solid rgba(255,255,255,0.2);
+    font-size: 0.9rem; letter-spacing: 1px;
+    opacity: 0; transition: opacity 0.3s;
+}
+.exhibit-hint.visible { opacity: 1; }
+
+/* ── Configurator Panel ── */
+#config-panel {
+    position: fixed; top: 0; right: -400px; /* slides in */
+    width: 380px; height: 100%;
+    background: rgba(10,10,12,0.85); backdrop-filter: blur(15px);
+    border-left: 1px solid rgba(255,255,255,0.1);
+    z-index: 50; display: flex; flex-direction: column; justify-content: center;
+    transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+#config-panel.open { right: 0; }
+
+.config-content { padding: 40px; }
+#config-title { font-size: 2.2rem; margin-bottom: 5px; }
+#config-specs { color: #888; font-size: 0.9rem; margin-bottom: 40px; letter-spacing: 1px; }
+
+.config-section { margin-bottom: 35px; }
+h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #aaa; margin-bottom: 15px; }
+
+.color-picker { display: flex; gap: 12px; }
+.color-swatch {
+    width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: transform 0.2s;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.active { border-color: #fff; transform: scale(1.15); }
+
+.button-group { display: flex; gap: 10px; }
+.button-group button {
+    flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); color: #ccc;
+    cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.2s;
+}
+.button-group button:hover { background: rgba(255,255,255,0.15); }
+.button-group button.active { background: #fff; color: #000; border-color: #fff; font-weight: 600; }
+
+#cta-btn {
+    width: 100%; padding: 16px; margin-bottom: 15px;
+    background: #fff; color: #000; border: none; font-weight: 600;
+    font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+}
+#exit-config-btn {
+    width: 100%; padding: 16px; background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,0.3); font-weight: 400;
+    font-size: 0.9rem; cursor: pointer;
+}
