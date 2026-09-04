@@ -1,0 +1,155 @@
+:root {
+    --primary: #ff6b35;
+    --bg: #0a0a0c;
+    --text: #ffffff;
+    --muted: #555;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body, html {
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    height: 100%;
+}
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    outline: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 45%;
+    height: 100vh;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 5% 0 6%;
+    pointer-events: none;
+}
+
+/* Tag with animated dot */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: fit-content;
+    padding: 0.5rem 1.4rem;
+    border: 1px solid rgba(255, 107, 53, 0.25);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(8px);
+    background: rgba(255, 107, 53, 0.06);
+    animation: fadeIn 1s ease 0.2s both;
+}
+
+.tag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(255, 107, 53, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Title */
+h1 {
+    font-size: clamp(4.5rem, 9vw, 10rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -4px;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: slideUp 0.8s ease both;
+}
+
+/* Description with accent highlights */
+.overlay p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 2.5rem;
+    animation: fadeIn 1s ease 0.4s both;
+}
+
+.accent {
+    color: #ddd;
+    font-weight: 700;
+}
+
+/* Tech chips */
+.tech-stack {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    animation: fadeIn 1s ease 0.6s both;
+}
+
+.chip {
+    padding: 0.55rem 1.3rem;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 107, 53, 0.25);
+    color: var(--primary);
+    background: rgba(255, 107, 53, 0.06);
+    transition: all 0.3s ease;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(255, 107, 53, 0.4);
+    }
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 5px var(--primary), 0 0 10px rgba(255, 107, 53, 0.2);
+    }
+}
